@@ -14,19 +14,23 @@ public class PlayerControll : MonoBehaviour
     public Vector3 LR;
     public Vector3 FB;
     public Rigidbody trap1;
-    GameObject player;
+    public GameObject playerone;
     public bool stun = false;
     public bool TimeShift = false;
+    public bool ZaWarudo = false;
+    private WorldControl WorldControlScript;
     public float[,] TimeCoordinates = new float[50, 3];
     int i;
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.tag == "Bolt")
         {
+            if (WorldControlScript.ZaWarudo == false) { 
             OnHitDestroy bolt = collision.gameObject.GetComponent<OnHitDestroy>();
             stun = true;
-            
+
             rb.velocity = bolt.rb.velocity;
+        }
         }
         if (collision.gameObject.tag == "Wall")
         {
@@ -84,6 +88,7 @@ public class PlayerControll : MonoBehaviour
     }
     void FixedUpdate()
     {
+        WorldControlScript = GameObject.Find("WorldController").GetComponent<WorldControl>();
         TimeCoordinates[0, 0] = transform.position.x;
         TimeCoordinates[0, 1] = transform.position.z;
         TimeCoordinates[0, 2] = transform.rotation.y;
@@ -177,7 +182,7 @@ public class PlayerControll : MonoBehaviour
             transform.position = new Vector3(TimeCoordinates[49, 0], transform.position.y, TimeCoordinates[49, 1]);
             transform.rotation = Quaternion.Euler(0, TimeCoordinates[49, 2], 0);
         }
-
+        ZaWarudo = Input.GetKey("x");
 
     }
 }

@@ -122,3 +122,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 54499775546909504}
+  WorldController: {fileID: 28387061391575938, guid: e8afdcab62f420442bc39068250e929b,
+    type: 3}
+  WorldControlScript: {fileID: 678713539, guid: e8afdcab62f420442bc39068250e929b,
+    type: 3}
+  startPosition: {x: 0, y: 0, z: 0}
+  distanceMoved: 0

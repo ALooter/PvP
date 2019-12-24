@@ -9,6 +9,8 @@ public class BallistaAutoFire : MonoBehaviour
     GameObject ballista;
     Collider Collider;
     public bool activated = false;
+    private WorldControl WorldControlScript;
+    public bool check = false;
     // Start is called before the first frame update
     void Fire()
     {
@@ -29,22 +31,30 @@ public class BallistaAutoFire : MonoBehaviour
     {
         Collider = GetComponent<Collider>();
         Collider.enabled = false;
-        Invoke("Activate", 2f); 
+        Invoke("Activate", 2f);
+        
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
+        WorldControlScript = GameObject.Find("WorldController").GetComponent<WorldControl>();
+        check = WorldControlScript.ZaWarudo;
         Debug.DrawRay(transform.position, transform.forward * 10, Color.green);
         
-        int LayerMask = 1 << 11;
+        //int LayerMask = 1 << 11;
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity, LayerMask))
-        {
-            if (activated == true)
+        if (Physics.Raycast(transform.position, transform.forward, out hit, Mathf.Infinity))
+        {if (hit.collider.tag == "Player")
             {
-                Invoke("Fire", 0f);
-                
+                if (activated == true)
+                    if (WorldControlScript.ZaWarudo == false)
+                    {
+                        {
+                            Invoke("Fire", 0f);
+
+                        }
+                    }
             }
         }
     }
