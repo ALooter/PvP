@@ -47,18 +47,17 @@ public class PlayerControll : MonoBehaviour
         {
             TimeCoordinates[i, 0] = TimeCoordinates[i - 1, 0];
         }
-       // TimeCoordinates[0, 0] = transform.position.x;
+   
         for (i = 49; i > 0; i--)
         {
             TimeCoordinates[i, 1] = TimeCoordinates[i - 1, 1];
         }
-        //TimeCoordinates[0, 1] = transform.position.z;
+     
         for (i = 49; i > 0; i--)
         {
             TimeCoordinates[i, 2] = TimeCoordinates[i - 1, 2];
         }
-        //TimeCoordinates[0, 2] = transform.rotation.y;
-        //Debug.Log("Invoked" + TimeCoordinates[49, 0] + TimeCoordinates[49, 1] + TimeCoordinates[49, 2]);
+
 
 
     }
@@ -77,7 +76,7 @@ public class PlayerControll : MonoBehaviour
         {
             TimeCoordinates[i, 2] = transform.rotation.y;
         }
-        InvokeRepeating("TimeCapture", 5f, 0.1f);
+        InvokeRepeating("TimeCapture", 0f, 0.1f);
 
     }
 
@@ -93,78 +92,13 @@ public class PlayerControll : MonoBehaviour
         TimeCoordinates[0, 1] = transform.position.z;
         TimeCoordinates[0, 2] = transform.rotation.y;
         if (stun == false)
-        { 
-        Left = Input.GetKey("a") || Input.GetKey(KeyCode.LeftArrow);
-        Right = Input.GetKey("d") || Input.GetKey(KeyCode.RightArrow);
-        Forward = Input.GetKey("w") || Input.GetKey(KeyCode.UpArrow);
-        Back = Input.GetKey("s") || Input.GetKey(KeyCode.DownArrow);
-        if (Forward == true)
         {
-            FB = Vector3.forward;
-            z = 2f;
-        }
-        else
-        {
-            if (Back == true)
+            rb.velocity = new Vector3(Input.GetAxis("Horizontal") * 2, 0, Input.GetAxis("Vertical") * 2);
+            if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
             {
-                FB = Vector3.forward * -1f;
-                z = -2f;
+                transform.forward = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
             }
-            else
-            {
-                if (Forward != true && Back != true)
-                {
-                    //FB = new Vector3(0, 0, 0);
-                    z = 0f;
-                }
-            }
-        }
-        if (Left == true)
-        {
-            LR = Vector3.left;
-            x = -2f;
-        }
-        else
-        {
-            if (Right == true)
-            {
-                LR = Vector3.left * -1f;
-                x = 2f;
-            }
-            else
-            {
-                if (Left != true && Right != true)
-                {
-                    x = 0f;
-                }
-            }
-        }
-        if (Right == true || Left == true)
-        {
-            if (Forward != true && Back != true)
-            {
-                FB = new Vector3(0, 0, 0);
-            }
-        }
-        if (Forward == true || Back == true)
-        {
-            if (Left != true && Right != true)
-            {
-                LR = new Vector3(0, 0, 0);
-            }
-        }
-        if (Right == true && Left == true)
-        {
-            x = 0f;
-        }
-        if (Forward == true && Back == true)
-        {
-            z = 0f;
-        }
-        rb.velocity = new Vector3(x, 0, z);
-        transform.forward = LR + FB;
-
-        if (Input.GetKeyDown(KeyCode.Mouse0) == true)
+            if (Input.GetKeyDown(KeyCode.Mouse0) == true)
         {
 
             Rigidbody clone;
@@ -179,10 +113,24 @@ public class PlayerControll : MonoBehaviour
         TimeShift = Input.GetKey("e");
         if (TimeShift == true)
         {
+            if (stun == true)
+            {
+                stun = false;
+                rb.velocity = new Vector3(0, 0, 0);
+            }
+            rb.velocity = new Vector3(0, 0, 0);
             transform.position = new Vector3(TimeCoordinates[49, 0], transform.position.y, TimeCoordinates[49, 1]);
             transform.rotation = Quaternion.Euler(0, TimeCoordinates[49, 2], 0);
         }
         ZaWarudo = Input.GetKey("x");
+        if (ZaWarudo == true)
+        {
+            if (stun == true)
+            {
+                stun = false;
+                rb.velocity = new Vector3(0, 0, 0);
+            }
+        }
 
     }
 }
