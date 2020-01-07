@@ -18,28 +18,36 @@ public class PlayerControll : MonoBehaviour
     public bool stun = false;
     public bool TimeShift = false;
     public bool ZaWarudo = false;
+    public Vector3 Ricochet;
     private WorldControl WorldControlScript;
     public float[,] TimeCoordinates = new float[50, 3];
     int i;
+    int a;
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.tag == "Bolt")
+        if (collision.gameObject.tag != "Floor")
         {
-            if (WorldControlScript.ZaWarudo == false) { 
-            OnHitDestroy bolt = collision.gameObject.GetComponent<OnHitDestroy>();
-            stun = true;
-
-            rb.velocity = bolt.rb.velocity;
-        }
-        }
-        if (collision.gameObject.tag == "Wall")
-        {
+            ContactPoint contact = collision.contacts[0];
             if (stun == true)
             {
-                stun = false;
-                rb.velocity = new Vector3(0, 0, 0);
+                //Ricochet = rb.velocity * -1;
+                rb.velocity = Vector3.Reflect(rb.velocity, contact.normal);
+                Invoke("StunOver", 0.5f);
             }
         }
+        if (collision.gameObject.tag == "Bolt")
+        {
+
+            if (WorldControlScript.ZaWarudo == false)
+            {
+                OnHitDestroy bolt = collision.gameObject.GetComponent<OnHitDestroy>();
+                stun = true;
+                rb.velocity = bolt.rb.velocity;
+                Invoke("StunOver", 2f);
+            }
+        }
+
+
     }
     void TimeCapture()
     {
@@ -60,6 +68,25 @@ public class PlayerControll : MonoBehaviour
 
 
 
+    }
+    void StunOver()
+    {
+        if (stun == true)
+        {
+            stun = false;
+            rb.velocity = new Vector3(0, 0, 0);
+        }
+        
+
+    }
+    IEnumerator Tracer()
+    {
+        for (a = 0; a < 50; a++)
+        {
+            transform.position = new Vector3(TimeCoordinates[a, 0], transform.position.y, TimeCoordinates[a, 1]);
+            transform.rotation = Quaternion.Euler(0, TimeCoordinates[a, 2], 0);
+            yield return new WaitForSeconds(0.001f);
+        }
     }
     // Start is called before the first frame update
     void Start()
@@ -93,10 +120,18 @@ public class PlayerControll : MonoBehaviour
         TimeCoordinates[0, 2] = transform.rotation.y;
         if (stun == false)
         {
-            rb.velocity = new Vector3(Input.GetAxis("Horizontal") * 2, 0, Input.GetAxis("Vertical") * 2);
+            //rb.velocity = new Vector3(Input.GetAxis("Horizontal") * 2, 0, Input.GetAxis("Vertical") * 2);
             if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
             {
                 transform.forward = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+                rb.velocity = transform.forward * 2;
+            }
+            if (Input.GetAxis("Horizontal") == 0 && Input.GetAxis("Vertical") == 0)
+            {
+                if (stun == false)
+                {
+                    rb.velocity = new Vector3(0,0,0);
+                }
             }
             if (Input.GetKeyDown(KeyCode.Mouse0) == true)
         {
@@ -115,20 +150,18 @@ public class PlayerControll : MonoBehaviour
         {
             if (stun == true)
             {
-                stun = false;
-                rb.velocity = new Vector3(0, 0, 0);
+                Invoke("StunOver", 0f);
             }
-            rb.velocity = new Vector3(0, 0, 0);
-            transform.position = new Vector3(TimeCoordinates[49, 0], transform.position.y, TimeCoordinates[49, 1]);
-            transform.rotation = Quaternion.Euler(0, TimeCoordinates[49, 2], 0);
+            stun = true;
+            StartCoroutine(Tracer());
+            stun = false;
         }
         ZaWarudo = Input.GetKey("x");
         if (ZaWarudo == true)
         {
             if (stun == true)
             {
-                stun = false;
-                rb.velocity = new Vector3(0, 0, 0);
+                Invoke("StunOver", 0f);
             }
         }
 

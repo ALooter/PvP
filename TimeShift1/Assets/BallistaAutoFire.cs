@@ -18,7 +18,7 @@ public class BallistaAutoFire : MonoBehaviour
     void Fire()
     {
         Rigidbody clone;
-        clone = Instantiate(projectile, transform.position + transform.TransformDirection(Vector3.forward) * 0.5f, transform.rotation);
+        clone = Instantiate(projectile, transform.position + transform.TransformDirection(Vector3.forward) * 1f, transform.rotation);
         clone.velocity = transform.TransformDirection(Vector3.forward * 10);
         activated = false;
         TimeCoordinates[1, 0] = 1;

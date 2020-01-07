@@ -4,24 +4,50 @@ using UnityEngine;
 
 public class OnHitDestroy : MonoBehaviour
 {
+    public bool ricochet = false;
     public Rigidbody rb;
     GameObject projectile;
     private WorldControl WorldControlScript;
     private PlayerControll PlayerControllScript;
     public Vector3 startPosition;
     public float distanceMoved;
+    
     void Destroy()
     {
         
             Destroy(gameObject);
         
     }
+    void Ricochet()
+    {
+        ricochet = true;
+    }
     private void OnCollisionStay(Collision collision)
     {
-        if (WorldControlScript.ZaWarudo == false)
+        if (collision.gameObject.tag != "Player")
         {
-            Invoke("Destroy", 0);
+            ContactPoint contact = collision.contacts[0];
+            if (ricochet == true)
+            {
+                if (WorldControlScript.ZaWarudo == false)
+                {
+                    Invoke("Destroy", 0);
+                }
+            }
+            else if (ricochet == false)
+            {
+                //rb.velocity = 
+                transform.forward = Vector3.Reflect(rb.velocity, contact.normal);
+                Invoke("Ricochet", 0.5f);
+            }
         }
+        if (collision.gameObject.tag == "Player")
+        { 
+            if (WorldControlScript.ZaWarudo == false)
+            {
+                Invoke("Destroy", 0);
+            }
+    }
     }
     // Start is called before the first frame update
     void Start()
